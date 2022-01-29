@@ -391,7 +391,8 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) SetExtraHeader(key, value string) {
+// AddHeader add extra http headers to the request
+func (c *Client) AddHeader(key, value string) {
 	if c.Header == nil {
 		c.Header = http.Header{}
 	}
