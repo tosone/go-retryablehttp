@@ -349,6 +349,9 @@ type Client struct {
 	HTTPClient *http.Client // Internal HTTP client.
 	Logger     interface{}  // Customer logger instance. Can be either Logger or LeveledLogger
 
+	// add extra http headers to the request
+	Header http.Header
+
 	RetryWaitMin time.Duration // Minimum time to wait
 	RetryWaitMax time.Duration // Maximum time to wait
 	RetryMax     int           // Maximum number of retries
@@ -386,6 +389,13 @@ func NewClient() *Client {
 		CheckRetry:   DefaultRetryPolicy,
 		Backoff:      DefaultBackoff,
 	}
+}
+
+func (c *Client) SetExtraHeader(key, value string) {
+	if c.Header == nil {
+		c.Header = http.Header{}
+	}
+	c.Header.Set(key, value)
 }
 
 func (c *Client) logger() interface{} {

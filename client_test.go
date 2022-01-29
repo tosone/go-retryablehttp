@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -172,7 +173,7 @@ func testClientDo(t *testing.T, body interface{}) {
 		var err error
 		resp, err = client.Do(req)
 		if err != nil {
-			t.Fatalf("err: %v", err)
+			log.Fatalf("err: %v", err)
 		}
 	}()
 

@@ -34,6 +34,14 @@ func (rt *RoundTripper) init() {
 func (rt *RoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	rt.once.Do(rt.init)
 
+	if req.Header != nil {
+		for key, val := range rt.Client.Header {
+			for _, v := range val {
+				req.Header.Add(key, v)
+			}
+		}
+	}
+
 	// Convert the request to be retryable.
 	retryableReq, err := FromRequest(req)
 	if err != nil {
