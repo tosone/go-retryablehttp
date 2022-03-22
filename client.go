@@ -459,8 +459,14 @@ func baseRetryPolicy(resp *http.Response, err error) (bool, error) {
 			if _, ok := v.Err.(x509.UnknownAuthorityError); ok {
 				return false, v
 			}
+			if strings.Contains(v.Error(), "certificate is not trusted") ||
+				strings.Contains(v.Error(), "certificate has expired or is not yet valid") ||
+				strings.Contains(v.Error(), "certificate has been revoked") ||
+				strings.Contains(v.Error(), "certificate is not standards compliant") ||
+				strings.Contains(v.Error(), "certificate is expired") {
+				return false, v
+			}
 		}
-
 		// The error is likely recoverable so retry.
 		return true, nil
 	}
@@ -563,15 +569,6 @@ func (c *Client) Do(req *Request) (*http.Response, error) {
 	})
 
 	logger := c.logger()
-
-	if logger != nil {
-		switch v := logger.(type) {
-		case LeveledLogger:
-			v.Debug("performing request", "method", req.Method, "url", req.URL)
-		case Logger:
-			v.Printf("[DEBUG] %s %s", req.Method, req.URL)
-		}
-	}
 
 	var resp *http.Response
 	var attempt int
